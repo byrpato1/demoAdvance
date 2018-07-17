@@ -23,7 +23,6 @@ export class ListaCreditosComponent implements OnInit {
   msgs: Message[] = [];
 
   persona = new Persona();
-  conyuge = new Persona();
   deudor = new Deudor();
   credito = new Credito();
   listCredito: any[];
@@ -77,7 +76,11 @@ export class ListaCreditosComponent implements OnInit {
   }
 
   nuevo() {
+    this.msgs = [];
     this.banderaForm = true;
+    this.persona = new Persona();
+    this.deudor = new Deudor();
+    this.credito = new Credito();
   }
 
   cancelar() {
@@ -85,12 +88,13 @@ export class ListaCreditosComponent implements OnInit {
   }
 
   verInfoCredito(data) {
+    this.msgs = [];
     console.log(data, 'fila');
     this.deudorInfo = data.nombresCompletos;
     this.monto = data.monto;
     this.plazo = data.plazo;
     this.cuota = data.cuota;
-    if(data.aprobacion == 'R'){
+    if(data.aprobacion == 'R') {
       this.estadoAprobacion = 'RECHAZADO';
     } else {
       if (data.aprobacion == 'A') {
@@ -107,32 +111,26 @@ export class ListaCreditosComponent implements OnInit {
   }
 
   guardar() {
+    this.msgs = [];
     this.banderaForm = false;
     this.creditosService.guardarPersona(this.persona).subscribe((persona: any) => {
       this.deudor.personaId = persona.id
       this.creditosService.guardarDeudor(this.deudor).subscribe((deudor: any) => {
         this.credito.deudorId = deudor.id;
         this.creditosService.guardarCredito(this.credito).subscribe((credito: any) => {
-          // this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Estudiante actualizado.' });
+          this.msgs.push({ severity: 'success', summary: 'Exito', detail: 'Credito ingresado.' });
+          this.getAllCreditos();
         }, (err: any) => {
           console.log(err)
-          // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
-        },
-        () => {
+          this.msgs.push({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
         });
-        // this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Estudiante actualizado.' });
       }, (err: any) => {
         console.log(err)
-        // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
-      },
-      () => {
+        this.msgs.push({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
       });
-
-      // this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Estudiante actualizado.' });
     }, (err: any) => {
-
       console.log(err)
-      // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
+      this.msgs.push({ severity: 'error', summary: 'Error', detail: 'No se pudo completar la acción' });
     },
     () => {
     });

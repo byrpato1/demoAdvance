@@ -19,9 +19,13 @@ import { CreditosService } from 'app/servicios/creditos/creditos.service';
 import {KeyFilterModule} from 'primeng/keyfilter';
 import { CatalogosService } from 'app/servicios/creditos/catalogos.service';
 import { ListaCreditosComponent } from 'app/views/creditos/listaCreditos.component';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 @NgModule({
   imports: [
     DialogModule,
+    MessageModule,
+    MessagesModule,
     TableModule,
     KeyFilterModule,
     CommonModule,
