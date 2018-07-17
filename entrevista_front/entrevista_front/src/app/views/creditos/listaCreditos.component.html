@@ -1,0 +1,410 @@
+<p-panel *ngIf="!banderaForm" header="Lista de Creditos">
+    <div class="ui-g-12 ui-md-12" style="padding-right: 0px;">
+        <div>
+            <button pButton style="float:right;text-align: right;" type="button" icon="fa fa-plus" label="Nuevo Credito" (click)="nuevo()"></button>
+        </div>
+    </div>
+    <br>
+    <br>
+    <p-table #dt [columns]="cols" [value]="listCredito" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">        
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Filtro Global" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+                <th style="width: 3%;">#</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr [pSelectableRow]="rowData">
+                <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                </td>
+                <td style="text-align: center">
+                    <button class="buttonAction" type="button" pButton icon="fa fa-search" title="Ver Info Credito"
+                        (click)="verInfoCredito(rowData)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+<p-panel *ngIf="banderaForm" header="Lista de Creditos">
+    <br>
+    <form #form="ngForm" (ngSubmit)="form.valid && guardar()">
+        <!-- <p-messages [(value)]="msgs"></p-messages> -->
+        <h3>Datos del Deudor</h3>
+        <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    N° Identificación *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="numeroIdentificacion" [(ngModel)]="persona.numeroIdentificacion"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.numeroIdentificacion?.valid">
+                        <i class="fa fa-close"></i>
+                        Tipo Identificacion es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Nombres *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input pInputText type="text" name="nombres" [(ngModel)]="persona.nombres" required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.nombres?.valid">
+                        <i class="fa fa-close"></i>
+                        Nombres es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Apellidos *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input pInputText type="text" name="apellidos" [(ngModel)]="persona.apellidos" minlength="2" required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.apellidos?.valid">
+                        <i class="fa fa-close"></i>
+                        Apellidos es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Fecha Naciemiento *:
+                </div>
+                <div class="ui-grid-col-6">
+
+                    <p-calendar name="fechaNacimiento" [(ngModel)]="persona.fechaNacimiento" [monthNavigator]="true" [yearNavigator]="true" yearRange="1960:2030"
+                        required></p-calendar> {{date6|date}}
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.fechaNacimiento?.valid">
+                        <i class="fa fa-close"></i>
+                        Fecha Naciemiento es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Cargas Familiares :
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="2" name="cargasFamiliares" [(ngModel)]="persona.cargasFamiliares"
+                    />
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Estado Civil *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <p-dropdown [style]="{'width':'100%'}" [options]="listEstadoCivil" name="estadoCivil" [(ngModel)]="persona.estadoCivilId"
+                        required></p-dropdown>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.estadoCivil?.valid">
+                        <i class="fa fa-close"></i>
+                        Estado Civil es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Ingresos *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="ingresos" [(ngModel)]="deudor.ingresos"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.ingresos?.valid">
+                        <i class="fa fa-close"></i>
+                        Ingresos es obligatorio
+                    </div>
+                </div>
+            </div>
+            <h3>Información adicional del Deudor</h3>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Tipo de dirección *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <p-dropdown [style]="{'width':'100%'}" [options]="listTipoDireccion" name="tipoDireccion" [(ngModel)]="deudor.direccion_id"
+                        required></p-dropdown>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.tipoDireccion?.valid">
+                        <i class="fa fa-close"></i>
+                        Tipo de dirección es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Dirección *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="direccion" [(ngModel)]="deudor.direccion"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.direccion?.valid">
+                        <i class="fa fa-close"></i>
+                        Dirección es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Número:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="numeroDireccion" [(ngModel)]="deudor.numero"/>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Tipo de teléfono *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <p-dropdown [style]="{'width':'100%'}" [options]="listTipoTelefono" name="tipoTelefono" [(ngModel)]="deudor.telefono_id"
+                        required></p-dropdown>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.tipoTelefono?.valid">
+                        <i class="fa fa-close"></i>
+                        Tipo de teléfono es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Teléfono *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="telefono" [(ngModel)]="deudor.telefono"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.telefono?.valid">
+                        <i class="fa fa-close"></i>
+                        Teléfono es obligatorio
+                    </div>
+                </div>
+            </div>
+            <!-- informacion del deudor -->
+            <h3>Información del Cónyuge</h3>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    N° Identificación *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="numeroIdentificacionC" [(ngModel)]="conyuge.numeroIdentificacion"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.numeroIdentificacionC?.valid">
+                        <i class="fa fa-close"></i>
+                        Tipo Identificacion es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Nombres *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input pInputText type="text" name="nombresC" [(ngModel)]="conyuge.nombres" required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.nombresC?.valid">
+                        <i class="fa fa-close"></i>
+                        Nombres es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Apellidos *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input pInputText type="text" name="apellidosC" [(ngModel)]="conyuge.apellidos" minlength="2" required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.apellidosC?.valid">
+                        <i class="fa fa-close"></i>
+                        Apellidos es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Fecha Naciemiento *:
+                </div>
+                <div class="ui-grid-col-6">
+
+                    <p-calendar name="fechaNacimientoC" [(ngModel)]="conyuge.fechaNacimiento" [monthNavigator]="true" [yearNavigator]="true" yearRange="1960:2030"
+                        required></p-calendar> {{date6|date}}
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.fechaNacimientoC?.valid">
+                        <i class="fa fa-close"></i>
+                        Fecha Naciemiento es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Cargas Familiares :
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="2" name="cargasFamiliaresC" [(ngModel)]="conyuge.cargasFamiliares"
+                    />
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Estado Civil *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <p-dropdown [style]="{'width':'100%'}" [options]="listEstadoCivil" name="estadoCivilC" [(ngModel)]="conyuge.estadoCivilId"
+                        required></p-dropdown>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.submitted  && !form.form.controls.estadoCivilC?.valid">
+                        <i class="fa fa-close"></i>
+                        Estado Civil es obligatorio
+                    </div>
+                </div>
+            </div>
+            <!-- Información Cónyuge -->
+            <h3>Información del Credito</h3>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Monto *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="10" name="monto" [(ngModel)]="credito.monto"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.monto?.valid">
+                        <i class="fa fa-close"></i>
+                        Monto es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Tasa *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="2" name="tasa" [(ngModel)]="credito.tasa"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.tasa?.valid">
+                        <i class="fa fa-close"></i>
+                        Tasa es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Plazo *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="2" name="plazo" [(ngModel)]="credito.plazo"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.plazo?.valid">
+                        <i class="fa fa-close"></i>
+                        Plazo es obligatorio
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2">
+                    Couta *:
+                </div>
+                <div class="ui-grid-col-6">
+                    <input type="text" pInputText pKeyFilter="int" maxlength="5" name="cuota" [(ngModel)]="credito.cuota"
+                        required/>
+                </div>
+                <div class="ui-grid-col-4">
+                    <div class="ui-message ui-messages-error ui-corner-all" maxlength="10" minlength="10" *ngIf="form.submitted  && !form.form.controls.cuota?.valid">
+                        <i class="fa fa-close"></i>
+                        Cuota es obligatorio
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px;width: 100%">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2"></div>
+                <div class="ui-grid-col-3">
+                    <button pButton type="submit" label="{{properties.guardar}}" [disabled]="!form.valid"></button>
+                </div>
+                <div class="ui-grid-col-3">
+                    <button pButton type="button" label="{{properties.cancelar}}" (click)="cancelar()" class="ui-button-secondary"></button>
+                </div>
+                <div class="ui-grid-col-4"></div>
+            </div>
+        </div>
+    </form>
+</p-panel>
+<p-dialog header="Informacion Credito" [(visible)]="esVisiblePopUpCredito" [style]="{'overflow': 'auto','width': '60%'}" [responsive]="true"
+    showEffect="fade" [modal]="true" [draggable]="false" resizable="false" resizable="false" [positionTop]="40">
+    <label>
+        Información del Credito segun los datos ingresados del Sr.
+        {{deudorInfo}}
+    </label>
+    <br>
+    <label>
+        Aprobación: {{aprobacion}}
+    </label>
+    <br>
+    <label>
+        Monto: {{monto}}
+    </label>
+    <br>
+    <label>
+       Plazo: {{plazo}}
+    </label>
+    <br>
+    <label>
+        Cuota: {{cuota}}
+     </label>
+     <br>
+     <label>
+        Tasa: {{tasa}}
+     </label>
+     <br>
+     <label>
+        Estado de aprobación de credito:  {{estadoAprobacion}}
+     </label>
+    <div class="footer-dialog"></div>
+    <div class="ui-g-12 ui-md-12 ui-lg-12" style="padding-right: 0px;">
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="button" id="btnAceptar" pButton (click)="cerraDialog();" label="Aceptar"></button>
+        </div>
+    </div>
+</p-dialog>

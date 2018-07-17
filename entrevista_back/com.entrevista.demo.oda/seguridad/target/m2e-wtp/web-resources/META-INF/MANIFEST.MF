@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Implementation-Title: seguridad
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: KRUGER
+Implementation-Vendor-Id: com.entrevista.demo
+Build-Jdk: 1.8.0_91
+Implementation-URL: http://projects.spring.io/spring-boot/com.entrevis
+ ta.demo.oda/seguridad/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+Main-Class: org.uprojects.com.seguridad.sc.AutorizacionserverApplicati
+ on
+
